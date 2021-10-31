@@ -1,0 +1,7 @@
+##
+[
+    {"productType":"e1", "statusID": 0,"name":"START", "possMachines":"[0]", "nextStatus":[{"prob":1.0, "nextState":100}]},
+    {"productType":"e1", "statusID": 100,"name":"AKK", "possMachines":"[0]", "nextStatus":[{"prob":1.0, "nextState":200}]},
+    {"productType":"e1", "statusID": 200,"name":"BP", "possMachines":"[1]", "nextStatus":[{"prob":0.21625, "nextState":600},{"prob":0.583875, "nextState":601},{"prob":0.064875, "nextState":300},{"prob":0.135, "nextState":606}]},
+    {"productType":"e1", "statusID": 300,"name":"AB","possMachines":"[2]", "nextStatus":[{"prob":1.0, "nextState":603}]}
+]

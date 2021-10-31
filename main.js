@@ -40,7 +40,8 @@ function open_module_select_window() {
         parent: mainWindow,
         modal: !debug,
         show: false
-    });
+    });    
+
     newwin.loadURL(path.join('file:', __dirname, 'src/template_select.html'));
 
     if (debug) {
@@ -78,6 +79,8 @@ function createWindow() {
             nodeIntegrationInWorker: true
         }
     });
+    
+    mainWindow.webContents.openDevTools();
 
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({

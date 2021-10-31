@@ -49,3 +49,7 @@ Use [electron-builder](https://github.com/electron-userland/electron-builder) to
 Get the latest [release](https://github.com/jcf94/vizgraph/releases).
 
 Now we have portable packages for Windows(.exe) and Most Linux Repositories(.AppImage).
+
+## Addition to visualize JSON file (Fork of original Project)
+
+For a different project I needed support to translate JSON files to a graph. JSON files are easier to handle and interpret in different software projects than vizgraph text. For this purpose a file starting with ## (double hashtag) will be read as json and translated to vizgraph. There is no possibility to change the default visual settings with the json file right now. An example file can be found on the top level of this repository (exampleJSONgraph.txt).

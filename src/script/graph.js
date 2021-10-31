@@ -6,8 +6,8 @@ let worker;
 let result;
 let panZoom;
 
-const {ipcRenderer, remote, shell} = require('electron');
-const {Menu, dialog, app} = remote;
+const { ipcRenderer, remote, shell } = require('electron');
+const { Menu, dialog, app } = remote;
 let fs = require('fs');
 let mainWindow = remote.getCurrentWindow();
 
@@ -17,24 +17,30 @@ let edit_state = false;
 let current_file = undefined;
 const app_version = app.getVersion();
 
-let into_edit = () => {
+let into_edit = () =>
+{
     edit_state = true;
-    if (current_file === undefined) {
+    if (current_file === undefined)
+    {
         mainWindow.setTitle('VizGraph (*)');
-    } else {
+    } else
+    {
         mainWindow.setTitle('VizGraph - ' + current_file + ' (*)');
     }
     ipcRenderer.send('cannot_close');
 }
 
-let into_read = () => {
+let into_read = () =>
+{
     edit_state = false;
-    if (current_file === undefined) {
+    if (current_file === undefined)
+    {
         mainWindow.setTitle('VizGraph');
-    } else {
+    } else
+    {
         mainWindow.setTitle('VizGraph - ' + current_file);
     }
-    
+
     ipcRenderer.send('can_close');
 }
 
@@ -44,9 +50,11 @@ let Split = require('split.js');
 let split_size = 40;
 let split = Split(['#editor', '#graph'], {
     sizes: [split_size, 100 - split_size],
-    onDragEnd: function() {
+    onDragEnd: function ()
+    {
         let svgOutput = document.getElementById("svg_output");
-        if (svgOutput != null) {
+        if (svgOutput != null)
+        {
             svgOutput.dispatchEvent(resizeEvent);
         }
     }
@@ -66,7 +74,8 @@ editor.setOptions({
 });
 
 language_tools.addCompleter({
-    getCompletions: function(editor, session, pos, prefix, callback) {
+    getCompletions: function (editor, session, pos, prefix, callback)
+    {
         callback(null, [
             // {
             //     name: "test",
@@ -80,8 +89,10 @@ language_tools.addCompleter({
     }
 });
 
-editor.on("change", function() {
-    if (!edit_state) {
+editor.on("change", function ()
+{
+    if (!edit_state)
+    {
         into_edit();
     }
     updateGraph();
@@ -89,7 +100,8 @@ editor.on("change", function() {
 
 // ------- Listening Action -------
 
-document.querySelector("#engine select").addEventListener("change", function() {
+document.querySelector("#engine select").addEventListener("change", function ()
+{
     last_engin = document.querySelector("#engine select").value;
     updateGraph();
 });
@@ -101,38 +113,44 @@ let xdot_button = document.querySelector('button#save_xdot');
 let plain_button = document.querySelector('button#save_plain');
 let ps_button = document.querySelector('button#save_ps');
 
-document.querySelector("#format select").addEventListener("change", function() {
+document.querySelector("#format select").addEventListener("change", function ()
+{
     let now_format = document.querySelector("#format select").value;
 
-    if (now_format === "svg") {
+    if (now_format === "svg")
+    {
         svg_button.style.display = "inline-block";
         png_button.style.display = "inline-block";
         json_button.style.display = "none";
         xdot_button.style.display = "none";
         plain_button.style.display = "none";
         ps_button.style.display = "none";
-    } else if (now_format === "json") {
+    } else if (now_format === "json")
+    {
         svg_button.style.display = "none";
         png_button.style.display = "none";
         json_button.style.display = "inline-block";
         xdot_button.style.display = "none";
         plain_button.style.display = "none";
         ps_button.style.display = "none";
-    } else if (now_format === "xdot") {
+    } else if (now_format === "xdot")
+    {
         svg_button.style.display = "none";
         png_button.style.display = "none";
         json_button.style.display = "none";
         xdot_button.style.display = "inline-block";
         plain_button.style.display = "none";
         ps_button.style.display = "none";
-    } else if (now_format === "plain") {
+    } else if (now_format === "plain")
+    {
         svg_button.style.display = "none";
         png_button.style.display = "none";
         json_button.style.display = "none";
         xdot_button.style.display = "none";
         plain_button.style.display = "inline-block";
         ps_button.style.display = "none";
-    } else if (now_format === "ps") {
+    } else if (now_format === "ps")
+    {
         svg_button.style.display = "none";
         png_button.style.display = "none";
         json_button.style.display = "none";
@@ -144,10 +162,16 @@ document.querySelector("#format select").addEventListener("change", function() {
     updateGraph();
 });
 
-function download_blod(format) {
-    let url = window.URL.createObjectURL(new Blob([result], { "type" : "text\/xml" }));
+function download_blod(format)
+{
+    let url = window.URL.createObjectURL(new Blob([result], { "type": "text\/xml" }));
 
     let pre = document.querySelector("#engine select").value;
+    if (format == "json")
+    {
+        try_to_save_json_to_file();
+        return;
+    }
 
     let a = document.createElement("a");
     document.body.appendChild(a);
@@ -159,13 +183,16 @@ function download_blod(format) {
     document.body.removeChild(a);
 };
 
-svg_button.addEventListener("click", function() {
+svg_button.addEventListener("click", function ()
+{
     download_blod("svg");
 });
 
-png_button.addEventListener("click", function() {
+png_button.addEventListener("click", function ()
+{
 
-    svgXmlToImageElement(result, {scale: panZoom.getZoom()}).then((image) => {
+    svgXmlToImageElement(result, { scale: panZoom.getZoom() }).then((image) =>
+    {
 
         let pre = document.querySelector("#engine select").value;
 
@@ -180,39 +207,49 @@ png_button.addEventListener("click", function() {
     });
 });
 
-json_button.addEventListener("click", function() {
+json_button.addEventListener("click", function ()
+{
     download_blod("json");
 });
 
-xdot_button.addEventListener("click", function() {
+xdot_button.addEventListener("click", function ()
+{
     download_blod("xdot");
 });
 
-plain_button.addEventListener("click", function() {
+plain_button.addEventListener("click", function ()
+{
     download_blod("plain");
 });
 
-ps_button.addEventListener("click", function() {
+ps_button.addEventListener("click", function ()
+{
     download_blod("ps");
 });
 
 // ------- Key Function -------
 
-function defaultScale() {
-    if ('devicePixelRatio' in window && window.devicePixelRatio > 1) {
-      return window.devicePixelRatio;
-    } else {
-      return 1;
+function defaultScale()
+{
+    if ('devicePixelRatio' in window && window.devicePixelRatio > 1)
+    {
+        return window.devicePixelRatio;
+    } else
+    {
+        return 1;
     }
 }
 
-function b64EncodeUnicode(str) {
-    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
+function b64EncodeUnicode(str)
+{
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1)
+    {
         return String.fromCharCode('0x' + p1);
     }));
 }
 
-function svgXmlToImageElement(svgXml) {
+function svgXmlToImageElement(svgXml)
+{
     var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
         _ref$scale = _ref.scale,
         scale = _ref$scale === undefined ? defaultScale() : _ref$scale,
@@ -221,41 +258,91 @@ function svgXmlToImageElement(svgXml) {
         _ref$quality = _ref.quality,
         quality = _ref$quality === undefined ? 1 : _ref$quality;
 
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve, reject)
+    {
         var svgImage = new Image();
 
-        svgImage.onload = function () {
-        var canvas = document.createElement('canvas');
-        canvas.width = svgImage.width * scale;
-        canvas.height = svgImage.height * scale;
+        svgImage.onload = function ()
+        {
+            var canvas = document.createElement('canvas');
+            canvas.width = svgImage.width * scale;
+            canvas.height = svgImage.height * scale;
 
-        var context = canvas.getContext("2d");
-        context.drawImage(svgImage, 0, 0, canvas.width, canvas.height);
+            var context = canvas.getContext("2d");
+            context.drawImage(svgImage, 0, 0, canvas.width, canvas.height);
 
-        canvas.toBlob(function (blob) {
-            var image = new Image();
-            image.src = URL.createObjectURL(blob);
-            image.width = svgImage.width;
-            image.height = svgImage.height;
+            canvas.toBlob(function (blob)
+            {
+                var image = new Image();
+                image.src = URL.createObjectURL(blob);
+                image.width = svgImage.width;
+                image.height = svgImage.height;
 
-            resolve(image);
-        }, mimeType, quality);
+                resolve(image);
+            }, mimeType, quality);
         };
 
-        svgImage.onerror = function (e) {
-        var error;
+        svgImage.onerror = function (e)
+        {
+            var error;
 
-        if ('error' in e) {
-            error = e.error;
-        } else {
-            error = new Error('Error loading SVG');
-        }
+            if ('error' in e)
+            {
+                error = e.error;
+            } else
+            {
+                error = new Error('Error loading SVG');
+            }
 
-        reject(error);
+            reject(error);
         };
 
         svgImage.src = 'data:image/svg+xml;base64,' + b64EncodeUnicode(svgXml);
     });
+}
+
+function translateJSONtoDot(str)
+{
+    let jsonStr = str.slice(2);
+    let dotStr = "";
+
+    try
+    {
+        let json = JSON.parse(jsonStr);
+
+        dotStr = `
+        digraph finite_state_machine {
+            rankdir=LR;
+            ratio="fill";
+            size="8.3,9.5!";
+            margin=0;            
+            node [shape = circle, fontsize=24];
+            edge [fontsize=24]
+        `
+
+        json.forEach(element =>
+        {
+            console.log(element.name)
+            element.nextStatus.forEach(next =>{
+                let temp = "";
+                temp += element.statusID;
+                temp += " -> ";
+                temp += next.nextState;
+                temp+= `[label = ${next.prob}]; \n`;
+                dotStr += temp;
+            });
+        });
+
+        dotStr += "}"
+    }
+    catch (e)
+    {
+        console.log("parsing failed: " + e);
+        dotStr = `digraph finite_state_machine {}`;
+    }
+
+    console.log(dotStr);
+    return dotStr;
 }
 
 function updateGraph()
@@ -270,7 +357,8 @@ function updateGraph()
 
     worker = new Worker("script/worker.js");
 
-    worker.onmessage = function(e) {
+    worker.onmessage = function (e)
+    {
         document.querySelector("#output").classList.remove("working");
         document.querySelector("#output").classList.remove("error");
 
@@ -279,19 +367,21 @@ function updateGraph()
         updateOutput();
     }
 
-    worker.onerror = function(e) {
+    worker.onerror = function (e)
+    {
         document.querySelector("#output").classList.remove("working");
         document.querySelector("#output").classList.add("error");
 
         let message = e.message === undefined ? "An error occurred while processing the graph input." : e.message;
 
         let error = document.querySelector("#error");
-        while (error.firstChild) {
+        while (error.firstChild)
+        {
             error.removeChild(error.firstChild);
         }
 
         document.querySelector("#error").appendChild(document.createTextNode(message));
-        
+
         console.error(e);
         e.preventDefault();
     }
@@ -304,33 +394,43 @@ function updateGraph()
         }
     };
 
+    if (params.src.charAt(0) == '#' && params.src.charAt(1) == '#')
+    {
+        params.src = translateJSONtoDot(params.src);
+    }
     worker.postMessage(params);
 }
 
 function updateOutput()
 {
+    console.log(result);
     let graph = document.querySelector("#output");
 
     let svg = graph.querySelector("svg");
-    if (svg) {
+    if (svg)
+    {
         graph.removeChild(svg);
     }
 
     let text = graph.querySelector("#text");
-    if (text) {
+    if (text)
+    {
         graph.removeChild(text);
     }
 
     let img = graph.querySelector("img");
-    if (img) {
+    if (img)
+    {
         graph.removeChild(img);
     }
 
-    if (!result) {
+    if (!result)
+    {
         return;
     }
 
-    if (document.querySelector("#format select").value == "svg") { //&& !document.querySelector("#raw input").checked) {
+    if (document.querySelector("#format select").value == "svg")
+    { //&& !document.querySelector("#raw input").checked) {
         let svg = parser.parseFromString(result, "image/svg+xml").documentElement;
         svg.id = "svg_output";
         graph.appendChild(svg);
@@ -343,14 +443,17 @@ function updateOutput()
             minZoom: 0.1
         });
 
-        svg.addEventListener('paneresize', function(e) {
+        svg.addEventListener('paneresize', function (e)
+        {
             panZoom.resize();
         }, false);
 
-        window.addEventListener('resize', function(e) {
+        window.addEventListener('resize', function (e)
+        {
             panZoom.resize();
         });
-    } else {
+    } else
+    {
         let text = document.createElement("div");
         text.id = "text";
         text.appendChild(document.createTextNode(result));
@@ -360,38 +463,79 @@ function updateOutput()
 
 // ------- Save Dot File -------
 
-let save_dot_to_file = (callback, args) => {
+let save_dot_to_file = (callback, args) =>
+{
     let dot_text = editor.getSession().getDocument().getValue();
     dialog.showSaveDialog(mainWindow, {
         filters: [
-            {name: 'GraphViz Dot Files', extensions: ['gv']},
-            {name: 'All Files', extensions: ['*']}
-        ]}, (filename) => {
-            if (filename === undefined){
-                console.log("File Save canceled.");
+            { name: 'GraphViz Dot Files', extensions: ['gv'] },
+            { name: 'All Files', extensions: ['*'] }
+        ]
+    }, (filename) =>
+    {
+        if (filename === undefined)
+        {
+            console.log("File Save canceled.");
+            return;
+        }
+        fs.writeFile(filename, dot_text, (err) =>
+        {
+            if (err)
+            {
+                alert("An error ocurred creating the file " + err.message);
                 return;
             }
-            fs.writeFile(filename, dot_text, (err) => {
-                if (err) {
-                    alert("An error ocurred creating the file "+ err.message);
-                    return;
-                }
-                current_file = filename;
-                into_read();
-                callback && callback(args);
-            });
+            current_file = filename;
+            into_read();
+            callback && callback(args);
+        });
     });
 }
 
-let try_to_save_dot_to_file = (callback, args) => {
-    if (edit_state) {
-        if (current_file === undefined) {
+let try_to_save_json_to_file = (callback, args) =>
+{
+    let dot_text = editor.getSession().getDocument().getValue();
+    dialog.showSaveDialog(mainWindow, {
+        filters: [
+            { name: 'GraphViz Dot Files', extensions: ['json'] },
+            { name: 'All Files', extensions: ['*'] }
+        ]
+    }, (filename) =>
+    {
+        if (filename === undefined)
+        {
+            console.log("File Save canceled.");
+            return;
+        }
+        fs.writeFile(filename, dot_text, (err) =>
+        {
+            if (err)
+            {
+                alert("An error ocurred creating the file " + err.message);
+                return;
+            }
+            current_file = filename;
+            into_read();
+            callback && callback(args);
+        });
+    });
+}
+
+let try_to_save_dot_to_file = (callback, args) =>
+{
+    if (edit_state)
+    {
+        if (current_file === undefined)
+        {
             save_dot_to_file(callback, args);
-        } else {
+        } else
+        {
             let dot_text = editor.getSession().getDocument().getValue();
-            fs.writeFile(current_file, dot_text, (err) => {
-                if (err) {
-                    alert("An error ocurred creating the file "+ err.message);
+            fs.writeFile(current_file, dot_text, (err) =>
+            {
+                if (err)
+                {
+                    alert("An error ocurred creating the file " + err.message);
                     return;
                 }
                 into_read();
@@ -401,14 +545,18 @@ let try_to_save_dot_to_file = (callback, args) => {
     }
 }
 
-let read_file = (filename) => {
-    if (filename === undefined) {
+let read_file = (filename) =>
+{
+    if (filename === undefined)
+    {
         console.log("No file selected.");
         return;
     }
     current_file = filename;
-    fs.readFile(current_file, 'utf-8', (err, data) => {
-        if (err) {
+    fs.readFile(current_file, 'utf-8', (err, data) =>
+    {
+        if (err)
+        {
             alert("An error ocurred reading the file :" + err.message);
             return;
         }
@@ -417,31 +565,41 @@ let read_file = (filename) => {
     });
 }
 
-let read_dot_from_file = (filepath) => {
-    if (filepath === undefined) {
+let read_dot_from_file = (filepath) =>
+{
+    if (filepath === undefined)
+    {
         dialog.showOpenDialog(mainWindow, {
             filters: [
-                {name: 'GraphViz Dot Files', extensions: ['gv', 'dot']},
-                {name: 'All Files', extensions: ['*']}
-            ]}, (filename) => {
-                if (filename != undefined) {
-                    read_file(filename[0]);
-                } 
+                { name: 'GraphViz Dot Files', extensions: ['gv', 'dot'] },
+                { name: 'All Files', extensions: ['*'] }
+            ]
+        }, (filename) =>
+        {
+            if (filename != undefined)
+            {
+                read_file(filename[0]);
+            }
         });
-    } else {
+    } else
+    {
         read_file(filepath);
     }
 }
 
-let try_to_read_dot_from_file = (filepath) => {
-    if (edit_state) {
+let try_to_read_dot_from_file = (filepath) =>
+{
+    if (edit_state)
+    {
         dialog.showMessageBox(mainWindow, {
             type: "question",
             message: "Save Current Dot File & Open another?",
             buttons: ["Yes", "No", "Cancel"],
             title: "Save Dot File"
-        }, (response) => {
-            switch(response) {
+        }, (response) =>
+        {
+            switch (response)
+            {
                 case 0:
                     try_to_save_dot_to_file(read_dot_from_file, filepath);
                     break;
@@ -452,16 +610,19 @@ let try_to_read_dot_from_file = (filepath) => {
                     return;
             }
         });
-    } else {
+    } else
+    {
         read_dot_from_file(filepath);
     }
 }
 
-let create_new_dot_file = () => {
+let create_new_dot_file = () =>
+{
     ipcRenderer.send('open_module_select_window');
 }
 
-document.addEventListener('drop', (e) => {
+document.addEventListener('drop', (e) =>
+{
     e.preventDefault();
     e.stopPropagation();
 
@@ -469,19 +630,23 @@ document.addEventListener('drop', (e) => {
     try_to_read_dot_from_file(e.dataTransfer.files[0].path);
 });
 
-document.addEventListener('dragover', (e) => {
+document.addEventListener('dragover', (e) =>
+{
     e.preventDefault();
     e.stopPropagation();
 });
 
-ipcRenderer.on('save_dot_file', () => {
+ipcRenderer.on('save_dot_file', () =>
+{
     dialog.showMessageBox(mainWindow, {
         type: "question",
         message: "VizGraph Exit && Save Current Dot File?",
         buttons: ["Yes", "No", "Cancel"],
         title: "Save Dot File"
-    }, (response) => {
-        switch(response) {
+    }, (response) =>
+    {
+        switch (response)
+        {
             case 0:
                 try_to_save_dot_to_file(mainWindow.close);
                 break;
@@ -494,74 +659,87 @@ ipcRenderer.on('save_dot_file', () => {
     });
 });
 
-ipcRenderer.on('argv', (event, message) => {
-    fs.stat(message, (err, stat) => {
-        if (stat && stat.isFile()) {
+ipcRenderer.on('argv', (event, message) =>
+{
+    fs.stat(message, (err, stat) =>
+    {
+        if (stat && stat.isFile())
+        {
             console.log(message)
             try_to_read_dot_from_file(message);
-        } else {
+        } else
+        {
             console.log("Not a file.");
             ipcRenderer.send('open_module_select_window');
         }
     })
 });
 
-ipcRenderer.on('create_new_dot', (event, message) => {
-    switch (message) {
-    case 0:
-        editor.getSession().getDocument().setValue('digraph G {\n}');
-        current_file = undefined;
-        into_read();
-        break;
-    case 1:
-        fs.readFile('template/clusters.gv', 'utf-8', (err, data) => {
-            editor.getSession().getDocument().setValue(data);
+ipcRenderer.on('create_new_dot', (event, message) =>
+{
+    switch (message)
+    {
+        case 0:
+            editor.getSession().getDocument().setValue('digraph G {\n}');
             current_file = undefined;
             into_read();
-        });
-        break;
-    case 2:
-        fs.readFile('template/datastruct.gv', 'utf-8', (err, data) => {
-            editor.getSession().getDocument().setValue(data);
-            current_file = undefined;
-            into_read();
-        });
-        break;
-    case 3:
-        fs.readFile('template/fsm.gv', 'utf-8', (err, data) => {
-            editor.getSession().getDocument().setValue(data);
-            current_file = undefined;
-            into_read();
-        });
-        break;
-    case 4:
-        fs.readFile('template/familytree.gv', 'utf-8', (err, data) => {
-            editor.getSession().getDocument().setValue(data);
-            current_file = undefined;
-            into_read();
-        });
-        break;
-    case 5:
-        fs.readFile('template/lion_share.gv', 'utf-8', (err, data) => {
-            editor.getSession().getDocument().setValue(data);
-            current_file = undefined;
-            into_read();
-        });
-        break;
-    case 6:
-        fs.readFile('template/polygons.gv', 'utf-8', (err, data) => {
-            editor.getSession().getDocument().setValue(data);
-            current_file = undefined;
-            into_read();
-        });
-        break;
-    case 7:
-        fs.readFile('template/switch.gv', 'utf-8', (err, data) => {
-            editor.getSession().getDocument().setValue(data);
-            current_file = undefined;
-            into_read();
-        });
-        break;
+            break;
+        case 1:
+            fs.readFile('template/clusters.gv', 'utf-8', (err, data) =>
+            {
+                editor.getSession().getDocument().setValue(data);
+                current_file = undefined;
+                into_read();
+            });
+            break;
+        case 2:
+            fs.readFile('template/datastruct.gv', 'utf-8', (err, data) =>
+            {
+                editor.getSession().getDocument().setValue(data);
+                current_file = undefined;
+                into_read();
+            });
+            break;
+        case 3:
+            fs.readFile('template/fsm.gv', 'utf-8', (err, data) =>
+            {
+                editor.getSession().getDocument().setValue(data);
+                current_file = undefined;
+                into_read();
+            });
+            break;
+        case 4:
+            fs.readFile('template/familytree.gv', 'utf-8', (err, data) =>
+            {
+                editor.getSession().getDocument().setValue(data);
+                current_file = undefined;
+                into_read();
+            });
+            break;
+        case 5:
+            fs.readFile('template/lion_share.gv', 'utf-8', (err, data) =>
+            {
+                editor.getSession().getDocument().setValue(data);
+                current_file = undefined;
+                into_read();
+            });
+            break;
+        case 6:
+            fs.readFile('template/polygons.gv', 'utf-8', (err, data) =>
+            {
+                editor.getSession().getDocument().setValue(data);
+                current_file = undefined;
+                into_read();
+            });
+            break;
+        case 7:
+            fs.readFile('template/switch.gv', 'utf-8', (err, data) =>
+            {
+                editor.getSession().getDocument().setValue(data);
+                current_file = undefined;
+                into_read();
+            });
+            break;
     }
     ipcRenderer.send('close_module_select_window');
 });
@@ -574,15 +752,19 @@ let menutemplate = [
         submenu: [
             {
                 label: 'New Dot File',
-                click: () => {
-                    if (edit_state) {
+                click: () =>
+                {
+                    if (edit_state)
+                    {
                         dialog.showMessageBox(mainWindow, {
                             type: "question",
                             message: "Save Current Dot File & Start a New Dot File?",
                             buttons: ["Yes", "No", "Cancel"],
                             title: "Save Dot File"
-                        }, (response) => {
-                            switch(response) {
+                        }, (response) =>
+                        {
+                            switch (response)
+                            {
                                 case 0:
                                     try_to_save_dot_to_file(create_new_dot_file);
                                     break;
@@ -593,7 +775,8 @@ let menutemplate = [
                                     return;
                             }
                         });
-                    } else {
+                    } else
+                    {
                         create_new_dot_file();
                     }
                 }
@@ -601,27 +784,38 @@ let menutemplate = [
             { type: 'separator' },
             {
                 label: 'Open Dot File',
-                click: () => {
+                click: () =>
+                {
                     try_to_read_dot_from_file();
                 }
             },
             {
                 label: 'Save Dot File',
                 accelerator: 'Ctrl+S',
-                click: () => {
+                click: () =>
+                {
                     try_to_save_dot_to_file();
                 }
             },
             {
                 label: 'Save Dot File to ...',
-                click: () => {
+                click: () =>
+                {
                     save_dot_to_file()
+                }
+            },
+            {
+                label: 'Save as JSON File to ...',
+                click: () =>
+                {
+                    try_to_save_json_to_file()
                 }
             },
             { type: 'separator' },
             {
                 label: 'Editor Setting',
-                click: () => {
+                click: () =>
+                {
                     editor.execCommand("showSettingsMenu");
                 }
             },
@@ -645,13 +839,14 @@ let menutemplate = [
             //{type: 'separator'},
             {
                 label: 'Reset Window Size',
-                click: () => {
+                click: () =>
+                {
                     mainWindow.setSize(1024, 768);
                 }
             },
-            {role: 'togglefullscreen'},
-            {type: 'separator'},
-            {role: 'minimize'}
+            { role: 'togglefullscreen' },
+            { type: 'separator' },
+            { role: 'minimize' }
         ]
     },
     {
@@ -659,13 +854,15 @@ let menutemplate = [
         submenu: [
             {
                 label: 'Help Documentation',
-                click: () => {
+                click: () =>
+                {
                     shell.openExternal('http://www.graphviz.org/documentation/');
                 }
             },
             {
                 role: 'about',
-                click: () => {
+                click: () =>
+                {
                     open_about_dialog();
                 }
             }
@@ -675,14 +872,15 @@ let menutemplate = [
 
 const nativeImage = remote.nativeImage;
 
-let open_about_dialog = () => {
+let open_about_dialog = () =>
+{
     dialog.showMessageBox(mainWindow, {
         title: 'About VizGraph',
         icon: nativeImage.createFromPath('src/img/ico.png'),
         message: 'VizGraph',
         detail: 'A simple tool for Using Graphviz.\nPowered by Viz.js & Electron.\n\n' +
-        'App version: Beta ' + app_version
-    }, () => {});
+            'App version: Beta ' + app_version
+    }, () => { });
 }
 
 let menu = Menu.buildFromTemplate(menutemplate);
