@@ -2,6 +2,8 @@
 
 A simple tool for Using [Graphviz](https://graphviz.gitlab.io/). Based on [Viz.js](https://github.com/mdaines/viz.js) & [Electron](https://github.com/electron/electron).
 
+This tool was fokred and modified in such a way that it is possible to visualise json files quickly.
+
 ---
 
 CircleCI Building: [![CircleCI](https://circleci.com/gh/jcf94/vizgraph.svg?style=svg)](https://circleci.com/gh/jcf94/vizgraph)
